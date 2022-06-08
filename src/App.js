@@ -1,11 +1,27 @@
+import React from "react";
 import "./scss/app.scss";
 import Header from "./components/Header";
 import Categories from "./components/Categories";
 import Sort from "./components/Sort";
 import PizzaBlock from "./components/PizzaBlock";
-import pizzas from "./assets/pizzas.json";
+import axios from "axios";
 
 function App() {
+  const [items, setItems] = React.useState([]);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(
+          "https://62a0689f202ceef7086cfb43.mockapi.io/items"
+        );
+        setItems(data);
+      } catch (e) {
+        alert("Ошибка при получении пицц");
+        console.error(e);
+      }
+    })();
+  }, []);
+
   return (
     <div className="wrapper">
       <Header />
@@ -17,7 +33,7 @@ function App() {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
-            {pizzas.map((obj, i) => (
+            {items.map((obj, i) => (
               <PizzaBlock key={obj.id + i} {...obj} />
             ))}
           </div>
