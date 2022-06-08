@@ -16,6 +16,7 @@ const Home = () => {
         );
         setItems(data);
         setIsLoading(false);
+        window.scrollTo(0, 0);
       } catch (e) {
         alert("Ошибка при получении пицц");
         console.error(e);
@@ -23,7 +24,7 @@ const Home = () => {
     })();
   }, []);
   return (
-    <>
+    <div className="container">
       <div className="content__top">
         <Categories />
         <Sort />
@@ -34,7 +35,7 @@ const Home = () => {
           ? [...new Array(6)].map((_, i) => <LoadingBlock key={i} />)
           : items.map((obj, i) => <PizzaBlock key={obj.id + i} {...obj} />)}
       </div>
-    </>
+    </div>
   );
 };
 
