@@ -5,16 +5,26 @@ import LoadingBlock from "../components/PizzaBlock/LoadingBlock";
 import PizzaBlock from "../components/PizzaBlock";
 import axios from "axios";
 import Pagination from "../components/Pagination";
+import { useDispatch, useSelector } from "react-redux";
+import { setCategoryId } from "../redux/slices/filterSlice";
 
 const Home = () => {
+  const categoryId = useSelector((state) => state.filter.categoryId);
+  const dispatch = useDispatch();
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const onChangeCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
+
+  const category = categoryId > 0 ? `category=${categoryId}` : "";
+
   React.useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(
-          `https://62a0689f202ceef7086cfb43.mockapi.io/items?page=${currentPage}&limit=4`
+          `https://62a0689f202ceef7086cfb43.mockapi.io/items?${category}&page=${currentPage}&limit=4`
         );
         setItems(data);
         setIsLoading(false);
@@ -24,11 +34,11 @@ const Home = () => {
         console.error(e);
       }
     })();
-  }, [currentPage]);
+  }, [categoryId, currentPage]);
   return (
     <div className="container">
       <div className="content__top">
-        <Categories />
+        <Categories onChangeCategory={onChangeCategory} />
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Categories = () => {
+const Categories = ({ onChangeCategory }) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
 
   const categories = [
@@ -13,6 +13,7 @@ const Categories = () => {
   ];
 
   const onClickCategory = (index) => {
+    onChangeCategory(index);
     setActiveIndex(index);
   };
   return (
