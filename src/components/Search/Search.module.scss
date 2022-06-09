@@ -1,0 +1,30 @@
+.root {
+  width: 30%;
+  max-width: 300px;
+  margin: 0 10px;
+  input {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 20px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  :focus {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  :focus::-webkit-input-placeholder {
+    color: transparent;
+  }
+  :focus::-moz-placeholder {
+    color: transparent;
+  }
+  :focus:-moz-placeholder {
+    color: transparent;
+  }
+  :focus:-ms-input-placeholder {
+    color: transparent;
+  }
+  @media (max-width: 560px) {
+    width: 100%;
+  }
+}

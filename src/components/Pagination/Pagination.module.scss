@@ -1,0 +1,42 @@
+.root {
+  text-align: center;
+
+  li {
+    display: inline-flex;
+    a {
+      width: 40px;
+      height: 40px;
+      padding: 10px;
+      border: 1px solid #fe5f1e;
+      border-radius: 30px;
+      margin-right: 10px;
+      cursor: pointer;
+      color: #fe5f1e;
+      text-align: center;
+
+      &:hover {
+        background: #fe5f1e;
+        color: #ffffff;
+      }
+    }
+  }
+  :global {
+    .disabled {
+      a {
+        border: 1px solid #7b7b7b;
+        color: #7b7b7b;
+        cursor: not-allowed;
+        &:hover {
+          background: initial;
+          color: #7b7b7b;
+        }
+      }
+    }
+    .selected {
+      a {
+        background: #fe5f1e;
+        color: #ffffff;
+      }
+    }
+  }
+}

@@ -4,15 +4,17 @@ import Sort from "../components/Sort";
 import LoadingBlock from "../components/PizzaBlock/LoadingBlock";
 import PizzaBlock from "../components/PizzaBlock";
 import axios from "axios";
+import Pagination from "../components/Pagination";
 
 const Home = () => {
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [currentPage, setCurrentPage] = React.useState(1);
   React.useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(
-          "https://62a0689f202ceef7086cfb43.mockapi.io/items"
+          `https://62a0689f202ceef7086cfb43.mockapi.io/items?page=${currentPage}&limit=4`
         );
         setItems(data);
         setIsLoading(false);
@@ -22,7 +24,7 @@ const Home = () => {
         console.error(e);
       }
     })();
-  }, []);
+  }, [currentPage]);
   return (
     <div className="container">
       <div className="content__top">
@@ -35,6 +37,7 @@ const Home = () => {
           ? [...new Array(6)].map((_, i) => <LoadingBlock key={i} />)
           : items.map((obj, i) => <PizzaBlock key={obj.id + i} {...obj} />)}
       </div>
+      <Pagination onChangePage={(number) => setCurrentPage(number)} />
     </div>
   );
 };
