@@ -1,20 +1,29 @@
 import React from "react";
 import Categories from "../components/Categories";
-import Sort from "../components/Sort";
+import Sort, { sortList } from "../components/Sort";
 import LoadingBlock from "../components/PizzaBlock/LoadingBlock";
 import PizzaBlock from "../components/PizzaBlock";
+import qs from "qs";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import { useDispatch, useSelector } from "react-redux";
-import { setCategoryId, setCurrentPage } from "../redux/slices/filterSlice";
+import {
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from "../redux/slices/filterSlice";
 
 const Home = () => {
+  const navigate = useNavigate();
   const { categoryId, sort, searchValue, currentPage } = useSelector(
     (state) => state.filter
   );
   const dispatch = useDispatch();
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const isSearch = React.useRef(false);
+  const isMounted = React.useRef(false);
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -22,14 +31,14 @@ const Home = () => {
   const onChangePage = (number) => {
     dispatch(setCurrentPage(number));
   };
-
   const sortType = sort.sortProperty;
-  const sortBy = sortType.replace("-", "");
-  const order = sortType.includes("-") ? "asc" : "desc";
-  const category = categoryId > 0 ? `category=${categoryId}` : "";
-  const search = searchValue ? `&search=${searchValue}` : "";
 
-  React.useEffect(() => {
+  const fetchPizzas = () => {
+    setIsLoading(true);
+    const sortBy = sortType.replace("-", "");
+    const order = sortType.includes("-") ? "asc" : "desc";
+    const category = categoryId > 0 ? `category=${categoryId}` : "";
+    const search = searchValue ? `&search=${searchValue}` : "";
     (async () => {
       try {
         const { data } = await axios.get(
@@ -37,17 +46,56 @@ const Home = () => {
         );
         setItems(data);
         setIsLoading(false);
-        window.scrollTo(0, 0);
       } catch (e) {
         alert("Ошибка при получении пицц");
         console.error(e);
       }
     })();
+  };
+
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+      const sort = sortList.find(
+        (obj) => obj.sortProperty === params.sortProperty
+      );
+      const state = { ...params, sort };
+      dispatch(setFilters(state));
+      if (Number(params.categoryId) === 0) {
+        fetchPizzas();
+      }
+      isSearch.current = true;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    console.log(isSearch.current);
+    window.scrollTo(0, 0);
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
   }, [categoryId, currentPage, sortType, searchValue]);
+
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, currentPage, sortType, searchValue]);
+
   return (
     <div className="container">
       <div className="content__top">
-        <Categories onChangeCategory={onChangeCategory} />
+        <Categories
+          categoryId={categoryId}
+          onChangeCategory={onChangeCategory}
+        />
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
