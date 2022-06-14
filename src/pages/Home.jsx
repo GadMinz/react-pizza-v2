@@ -69,7 +69,6 @@ const Home = () => {
   }, []);
 
   React.useEffect(() => {
-    console.log(isSearch.current);
     window.scrollTo(0, 0);
     if (!isSearch.current) {
       fetchPizzas();
